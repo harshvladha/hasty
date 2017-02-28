@@ -51,5 +51,6 @@ func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, ErrorSta
 	if (methods[requestMethod])&(mux.Routes[req.URL.Path].methods) == 0 {
 		return false, ErrorStatusCode{HttpStatus: http.StatusMethodNotAllowed}
 	}
+	mux.Routes[req.URL.Path].Handler.ServeHTTP(rw, req)
 	return true, nil
 }
