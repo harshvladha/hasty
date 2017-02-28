@@ -25,3 +25,13 @@ type Route struct {
 func NewRoute(url string, handler http.Handler) *Route {
 	return &Route{Path: url, Handler: handler}
 }
+
+// setMethod enables the passed method for the given route
+func (r *Route) setMethod(m string) {
+	r.methods |= methods[m]
+}
+
+// methodAllowed checks if Method is allowed on the route
+func (r *Route) methodAllowed(m string) bool {
+	return methods[m]&r.methods != 0
+}

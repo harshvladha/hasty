@@ -128,6 +128,6 @@ func (mux *Mux) register(method string, path string, handler http.Handler) *Rout
 		route = NewRoute(fullUrl, handler)
 		mux.Routes[fullUrl] = route
 	}
-	route.methods |= methods[method]
+	route.setMethod(method)
 	return route
 }
