@@ -14,3 +14,7 @@ type Route struct {
 	methods int
 	Handler http.Handler
 }
+
+func NewRoute(url string, handler http.Handler) *Route {
+	return &Route{Path: url, Handler: handler}
+}
