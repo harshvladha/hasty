@@ -9,14 +9,20 @@ package hasty
 
 import "net/http"
 
+// ErrorStatusCode is used to signal for
+// HTTP Error Status Codes
 type ErrorStatusCode struct {
 	HttpStatus int
 }
 
+// ListenAndServe appends ":" in port before
+// calling http.ListenAndServe
 func (mux *Mux) ListenAndServe(port string) error {
 	return http.ListenAndServe(":"+port, mux)
 }
 
+// validate is used to check for trailing slash
+// and parse the request
 func (mux *Mux) validate(rw http.ResponseWriter, req *http.Request) (bool, *ErrorStatusCode) {
 	pathLen := len(req.URL.Path)
 	if pathLen > 1 && req.URL.Path[pathLen-1:] == "/" {
@@ -28,6 +34,7 @@ func (mux *Mux) validate(rw http.ResponseWriter, req *http.Request) (bool, *Erro
 	return mux.parse(rw, req)
 }
 
+// cleanURL cleans trailing slashes recursively
 func cleanURL(url *string) {
 	urlLen := len(*url)
 	if urlLen > 1 {
@@ -38,6 +45,10 @@ func cleanURL(url *string) {
 	}
 }
 
+// parse checks for the route and its method
+// returns http.StatusNotFound if route is not registered
+// returns http.StatusMethodNotAllowed if method for that route is not registered
+// otherwise calls the ServeHTTP of the http.Handler registered for the route
 func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, *ErrorStatusCode) {
 	if mux.Routes[req.URL.Path] == nil {
 		return false, &ErrorStatusCode{HttpStatus: http.StatusNotFound}

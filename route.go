@@ -9,12 +9,19 @@ package hasty
 
 import "net/http"
 
+// Route contains Path and methods on it is enabled,
+// with Handler to serve request
+// Path: is full path with prefix
+// methods: have value OR'ed for all the methods enabled
+// Handler: has a serving handler for the request
 type Route struct {
 	Path    string
 	methods int
 	Handler http.Handler
 }
 
+// NewRoute creates new instance of Route
+// and returns its pointer
 func NewRoute(url string, handler http.Handler) *Route {
 	return &Route{Path: url, Handler: handler}
 }

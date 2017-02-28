@@ -25,6 +25,9 @@ type Mux struct {
 }
 
 var (
+	// methods is a map of HTTP Methods with a value 2^(x)
+	// to determine methods enabled for
+	// the given endpoint
 	methods = map[string]int{
 		http.MethodGet:     1 << 1,
 		http.MethodHead:    1 << 2,
@@ -38,28 +41,34 @@ var (
 	}
 )
 
+// New creates new instance of Mux and returns its pointer
 func New() *Mux {
 	mux := &Mux{Routes: make(map[string]*Route), caseSensitive: false}
 	mux.Serve = mux.DefaultServe
 	return mux
 }
 
+// CaseSensitive sets whether routes are case sensitive
+// or not. Default being false
 func (mux *Mux) CaseSensitive(cs bool) *Mux {
 	mux.caseSensitive = cs
 	return mux
 }
 
+// Prefix sets a default prefix to all the registered routes
 func (mux *Mux) Prefix(prefix string) *Mux {
 	mux.prefix = strings.TrimSuffix(prefix, "/")
 	return mux
 }
 
+// DefaultServe is the default HTTP request handler
 func (mux *Mux) DefaultServe(rw http.ResponseWriter, req *http.Request) {
 	if ok, err := mux.validate(rw, req); !ok {
 		rw.WriteHeader(err.HttpStatus)
 	}
 }
 
+// ServeHTTP calls the Serve method of Mux for processing
 func (mux *Mux) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if !mux.caseSensitive {
 		req.URL.Path = strings.ToLower(req.URL.Path)
