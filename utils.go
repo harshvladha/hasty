@@ -17,7 +17,7 @@ func (mux *Mux) ListenAndServe(port string) error {
 	return http.ListenAndServe(":"+port, mux)
 }
 
-func (mux *Mux) validate(rw http.ResponseWriter, req *http.Request) (bool, ErrorStatusCode) {
+func (mux *Mux) validate(rw http.ResponseWriter, req *http.Request) (bool, *ErrorStatusCode) {
 	pathLen := len(req.URL.Path)
 	if pathLen > 1 && req.URL.Path[pathLen-1:] == "/" {
 		cleanURL(&req.URL.Path)
@@ -38,9 +38,9 @@ func cleanURL(url *string) {
 	}
 }
 
-func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, ErrorStatusCode) {
+func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, *ErrorStatusCode) {
 	if mux.Routes[req.URL.Path] == nil {
-		return false, ErrorStatusCode{HttpStatus: http.StatusNotFound}
+		return false, &ErrorStatusCode{HttpStatus: http.StatusNotFound}
 	}
 	requestMethod := req.Method
 	// for HEAD method, default to GET
@@ -49,7 +49,7 @@ func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, ErrorSta
 	}
 	// check if Method is allowed for the given route
 	if (methods[requestMethod])&(mux.Routes[req.URL.Path].methods) == 0 {
-		return false, ErrorStatusCode{HttpStatus: http.StatusMethodNotAllowed}
+		return false, &ErrorStatusCode{HttpStatus: http.StatusMethodNotAllowed}
 	}
 	mux.Routes[req.URL.Path].Handler.ServeHTTP(rw, req)
 	return true, nil
