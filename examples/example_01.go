@@ -11,7 +11,7 @@ func main() {
 	fmt.Println("Starting...")
 	myMux := hasty.New()
 	myMux.Get("/test", http.HandlerFunc(getHandler))
-	myMux.Post("/test", http.HandlerFunc(getHandler))
+	myMux.Post("/test", http.HandlerFunc(postHandler))
 	fmt.Println("Registered...")
 	err := myMux.ListenAndServe("8080")
 	if err != nil {
@@ -29,6 +29,17 @@ func getHandler(rw http.ResponseWriter, req *http.Request) {
 		Second string
 		Third  string
 	}{"Hello", "World!", queryId}
+
+	json.NewEncoder(rw).Encode(&myJson)
+}
+
+
+func postHandler(rw http.ResponseWriter, req *http.Request) {
+
+	var myJson = struct {
+		First  string
+		Second string
+	}{"Hello", "Post World!"}
 
 	json.NewEncoder(rw).Encode(&myJson)
 }

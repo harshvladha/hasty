@@ -123,8 +123,8 @@ func (mux *Mux) register(method string, path string, handler http.Handler) *Rout
 	cleanURL(&fullUrl)
 	rt := mux.Routes.add(fullUrl)
 	if rt.route == nil {
-		rt.route = NewRoute(fullUrl, handler)
+		rt.route = NewRoute(fullUrl)
 	}
-	rt.route.setMethod(method)
+	rt.route.setMethod(method, &handler)
 	return rt.route
 }

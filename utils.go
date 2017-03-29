@@ -84,7 +84,8 @@ func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, *ErrorSt
 	if ctx != nil {
 		req = req.WithContext(ctx)
 	}
-	route.Handler.ServeHTTP(rw, req)
+	handler := *route.handler(requestMethod)
+	handler.ServeHTTP(rw, req)
 
 	return true, nil
 }
