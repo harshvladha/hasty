@@ -1,9 +1,7 @@
-/*
-Package Hasty provides very simple and fast Multiplexer for Go
-Package is OpenSource at https://github.com/harshvladha/hasty
-Developed by Harsh Vardhan Ladha
-Email: harsh.ladha@gmail.com
-*/
+// Package Hasty provides very simple and fast Multiplexer for Go
+// Package is OpenSource at https://github.com/harshvladha/hasty
+// Developed by Harsh Vardhan Ladha
+// Email: harsh.ladha@gmail.com
 
 package hasty
 
@@ -17,7 +15,7 @@ import (
 // notFound: 404 status code handler, default: http.NotFound
 // CaseSensitive: for routes to be case sensitive or not, default false
 type Mux struct {
-	Routes        map[string]*Route
+	Routes        *RouteTrie
 	prefix        string
 	notFound      http.Handler
 	Serve         func(rw http.ResponseWriter, req *http.Request)
@@ -43,7 +41,7 @@ var (
 
 // New creates new instance of Mux and returns its pointer
 func New() *Mux {
-	mux := &Mux{Routes: make(map[string]*Route), caseSensitive: false}
+	mux := &Mux{Routes: rootRouteTrie(), caseSensitive: false}
 	mux.Serve = mux.DefaultServe
 	return mux
 }
@@ -57,7 +55,8 @@ func (mux *Mux) CaseSensitive(cs bool) *Mux {
 
 // Prefix sets a default prefix to all the registered routes
 func (mux *Mux) Prefix(prefix string) *Mux {
-	mux.prefix = strings.TrimSuffix(prefix, "/")
+	cleanURL(&prefix)
+	mux.prefix = prefix
 	return mux
 }
 

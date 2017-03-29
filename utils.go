@@ -7,13 +7,22 @@ Email: harsh.ladha@gmail.com
 
 package hasty
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // ErrorStatusCode is used to signal for
 // HTTP Error Status Codes
 type ErrorStatusCode struct {
 	HttpStatus int
 }
+
+// contextKeyType is a private struct that is used for storing path variables
+type contextKeyType struct{}
+
+// contextKey is the key that is used to store path variables in the context for each request
+var contextKey = contextKeyType{}
 
 // ListenAndServe appends ":" in port before
 // calling http.ListenAndServe
@@ -27,7 +36,7 @@ func (mux *Mux) validate(rw http.ResponseWriter, req *http.Request) (bool, *Erro
 	pathLen := len(req.URL.Path)
 	if pathLen > 1 && req.URL.Path[pathLen-1:] == "/" {
 		cleanURL(&req.URL.Path)
-		rw.Header().Set("Location", req.URL.String())
+		rw.Header().Set("Location", "/"+req.URL.String())
 		rw.WriteHeader(http.StatusFound)
 		return true, nil
 	}
@@ -42,6 +51,10 @@ func cleanURL(url *string) {
 			*url = (*url)[:urlLen-1]
 			cleanURL(url)
 		}
+		if (*url)[:1] == "/" {
+			*url = (*url)[1:]
+			cleanURL(url)
+		}
 	}
 }
 
@@ -50,17 +63,39 @@ func cleanURL(url *string) {
 // returns http.StatusMethodNotAllowed if method for that route is not registered
 // otherwise calls the ServeHTTP of the http.Handler registered for the route
 func (mux *Mux) parse(rw http.ResponseWriter, req *http.Request) (bool, *ErrorStatusCode) {
-	if mux.Routes[req.URL.Path] == nil {
-		return false, &ErrorStatusCode{HttpStatus: http.StatusNotFound}
+	pathVars := make(map[string]string)
+	route, err := mux.Routes.parse(mux, req.URL.EscapedPath(), pathVars)
+
+	if err != nil {
+		return false, err
 	}
+
 	requestMethod := req.Method
 	// for HEAD method, default to GET
 	if requestMethod == http.MethodHead {
 		requestMethod = http.MethodGet
 	}
-	if !mux.Routes[req.URL.Path].methodAllowed(requestMethod) {
+
+	if !route.methodAllowed(requestMethod) {
 		return false, &ErrorStatusCode{HttpStatus: http.StatusMethodNotAllowed}
 	}
-	mux.Routes[req.URL.Path].Handler.ServeHTTP(rw, req)
+
+	ctx := context.WithValue(req.Context(), contextKey, pathVars)
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+	route.Handler.ServeHTTP(rw, req)
+
 	return true, nil
+}
+
+// GetValue returns the path variable of the requested URL
+func GetValue(req *http.Request, variable string) string {
+	values, ok := req.Context().Value(contextKey).(map[string]string)
+
+	if ok {
+		return values[variable]
+	}
+
+	return ""
 }

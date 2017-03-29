@@ -1,9 +1,7 @@
-/*
-Package Hasty provides very simple and fast Multiplexer for Go
-Package is OpenSource at https://github.com/harshvladha/hasty
-Developed by Harsh Vardhan Ladha
-Email: harsh.ladha@gmail.com
-*/
+// Package Hasty provides very simple and fast Multiplexer for Go
+// Package is OpenSource at https://github.com/harshvladha/hasty
+// Developed by Harsh Vardhan Ladha
+// Email: harsh.ladha@gmail.com
 
 package hasty
 
@@ -123,11 +121,10 @@ func (mux *Mux) Handle(path string, handler http.Handler) {
 func (mux *Mux) register(method string, path string, handler http.Handler) *Route {
 	fullUrl := mux.prefix + path
 	cleanURL(&fullUrl)
-	route := mux.Routes[fullUrl]
-	if route == nil {
-		route = NewRoute(fullUrl, handler)
-		mux.Routes[fullUrl] = route
+	rt := mux.Routes.add(fullUrl)
+	if rt.route == nil {
+		rt.route = NewRoute(fullUrl, handler)
 	}
-	route.setMethod(method)
-	return route
+	rt.route.setMethod(method)
+	return rt.route
 }

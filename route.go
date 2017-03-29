@@ -1,9 +1,7 @@
-/*
-Package Hasty provides very simple and fast Multiplexer for Go
-Package is OpenSource at https://github.com/harshvladha/hasty
-Developed by Harsh Vardhan Ladha
-Email: harsh.ladha@gmail.com
-*/
+// Package Hasty provides very simple and fast Multiplexer for Go
+// Package is OpenSource at https://github.com/harshvladha/hasty
+// Developed by Harsh Vardhan Ladha
+// Email: harsh.ladha@gmail.com
 
 package hasty
 
