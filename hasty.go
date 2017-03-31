@@ -62,8 +62,12 @@ func (mux *Mux) Prefix(prefix string) *Mux {
 
 // DefaultServe is the default HTTP request handler
 func (mux *Mux) DefaultServe(rw http.ResponseWriter, req *http.Request) {
-	if ok, err := mux.validate(rw, req); !ok {
+	ok, err := mux.validate(rw, req)
+	if !ok {
 		rw.WriteHeader(err.HttpStatus)
+		if err.HttpStatus == http.StatusNotFound {
+			mux.notFound.ServeHTTP(rw, req)
+		}
 	}
 }
 

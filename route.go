@@ -13,15 +13,15 @@ import "net/http"
 // methods: have value OR'ed for all the methods enabled
 // Handler: has a serving handler for the request
 type Route struct {
-	Path    string
-	methods int
+	Path           string
+	methods        int
 	methodHandlers map[string]*http.Handler
 }
 
 // NewRoute creates new instance of Route
 // and returns its pointer
 func NewRoute(url string) *Route {
-	return &Route{Path: url, methodHandlers:make(map[string]*http.Handler)}
+	return &Route{Path: url, methodHandlers: make(map[string]*http.Handler)}
 }
 
 // setMethod enables the passed method for the given route

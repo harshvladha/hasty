@@ -10,6 +10,7 @@ import (
 func main() {
 	fmt.Println("Starting...")
 	myMux := hasty.New()
+	myMux.NotFound(http.HandlerFunc(handler404))
 	myMux.Get("/test", http.HandlerFunc(getHandler))
 	myMux.Post("/test", http.HandlerFunc(postHandler))
 	fmt.Println("Registered...")
@@ -33,7 +34,6 @@ func getHandler(rw http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(rw).Encode(&myJson)
 }
 
-
 func postHandler(rw http.ResponseWriter, req *http.Request) {
 
 	var myJson = struct {
@@ -42,4 +42,8 @@ func postHandler(rw http.ResponseWriter, req *http.Request) {
 	}{"Hello", "Post World!"}
 
 	json.NewEncoder(rw).Encode(&myJson)
+}
+
+func handler404(rw http.ResponseWriter, req *http.Request) {
+	fmt.Fprint(rw, "Page not found..")
 }

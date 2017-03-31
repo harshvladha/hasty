@@ -128,3 +128,15 @@ func (mux *Mux) register(method string, path string, handler http.Handler) *Rout
 	rt.route.setMethod(method, &handler)
 	return rt.route
 }
+
+// NotFound registers a custom 404 Handler and
+// takes http.Handler as argument
+func (mux *Mux) NotFound(handler http.Handler) {
+	mux.notFound = handler
+}
+
+// NotFoundFunc registers a custom 404 Handler
+// and takes http.HandlerFunc as argument
+func (mux *Mux) NotFoundFunc(handlerFunc http.HandlerFunc) {
+	mux.notFound = handlerFunc
+}
