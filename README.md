@@ -45,6 +45,18 @@ func getHandler(rw http.ResponseWriter, req *http.Request) {
 
 ```
 
+### Contributing
+- Fork it
+- Create issue on harshvladha/hasty
+- Create your feature/issue related branch (git checkout -b my-new-feature)
+- **Write Unit Tests**
+- Commit your changes (git commit -am 'Added some feature, Reference to issue.') e.g., Added xyz feature, resolves #1
+- Push to the branch (git push origin my-new-feature)
+- Create new Pull Request
+
+### License
+MIT
+
 ### TODO
 - Test Cases
 - REGEX support in Path Variable
