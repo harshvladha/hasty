@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hasty"
+	"github.com/harshvladha/hasty"
 	"net/http"
 )
 
