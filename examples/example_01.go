@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/harshvladha/hasty"
 	"net/http"
+
+	"github.com/harshvladha/hasty"
 )
 
 func main() {
