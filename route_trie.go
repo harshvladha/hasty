@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // RouteTrie is a Trie data structure which holds
@@ -86,8 +87,14 @@ func (rt *RouteTrie) parse(mux *Mux, path string, pathVars map[string]string) (*
 // and saves path variable for pattern based RouteTrie node
 func (rt *RouteTrie) matchAndParse(mux *Mux, path string, pathVars map[string]string) (*RouteTrie, bool) {
 	for _, child := range rt.children {
+
+		currentToken := child.token
+		if mux.caseSensitive {
+			currentToken = strings.ToLower(currentToken)
+		}
+
 		switch {
-		case !child.pattern && child.token == path:
+		case !child.pattern && currentToken == path:
 			return child, true
 		case child.pattern:
 			pathVars[child.token] = path
