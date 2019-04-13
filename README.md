@@ -56,9 +56,3 @@ func getHandler(rw http.ResponseWriter, req *http.Request) {
 
 ### License
 MIT
-
-### TODO
-- Test Cases
-- REGEX support in Path Variable
-- License
-- Optimisation
