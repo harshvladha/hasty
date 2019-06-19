@@ -1,3 +1,3 @@
 module github.com/harshvladha/hasty
 
-require github.com/harshvladha/hasty v0.0.0-20181109093259-fa55512a52a7
+require github.com/harshvladha/hasty v0.4.0
